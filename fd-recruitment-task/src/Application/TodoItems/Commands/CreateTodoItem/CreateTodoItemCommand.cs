@@ -10,6 +10,9 @@ public record CreateTodoItemCommand : IRequest<int>
     public int ListId { get; init; }
 
     public string? Title { get; init; }
+
+    public string? Colour { get; set; }
+
 }
 
 public class CreateTodoItemCommandHandler : IRequestHandler<CreateTodoItemCommand, int>

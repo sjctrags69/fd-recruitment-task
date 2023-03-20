@@ -30,7 +30,7 @@ public class GetTodosTests : BaseTestFixture
         await AddAsync(new TodoList
         {
             Title = "Shopping",
-            Colour = Colour.Blue,
+            //Colour = Colour.Blue,
             Items =
                     {
                         new TodoItem { Title = "Apples", Done = true },
@@ -47,6 +47,8 @@ public class GetTodosTests : BaseTestFixture
 
         var result = await SendAsync(query);
 
+        Console.WriteLine(result.Lists.First().Items[0].Colour);
+        Console.WriteLine(result.Lists.First().Colour);
         result.Lists.Should().HaveCount(1);
         result.Lists.First().Items.Should().HaveCount(7);
     }

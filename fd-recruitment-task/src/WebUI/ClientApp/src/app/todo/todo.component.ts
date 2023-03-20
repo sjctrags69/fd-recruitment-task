@@ -5,7 +5,7 @@ import {
   TodoListsClient, TodoItemsClient,
   TodoListDto, TodoItemDto, PriorityLevelDto,
   CreateTodoListCommand, UpdateTodoListCommand,
-  CreateTodoItemCommand, UpdateTodoItemDetailCommand
+  CreateTodoItemCommand, UpdateTodoItemDetailCommand, TodoItemTagDto
 } from '../web-api-client';
 
 @Component({
@@ -17,6 +17,7 @@ export class TodoComponent implements OnInit {
   debug = false;
   deleting = false;
   deleteCountDown = 0;
+  countRemTags: [];
   deleteCountDownInterval: any;
   lists: TodoListDto[];
   priorityLevels: PriorityLevelDto[];
@@ -32,7 +33,11 @@ export class TodoComponent implements OnInit {
     id: [null],
     listId: [null],
     priority: [''],
-    note: ['']
+    note: [''],
+    colour: [''],
+    tag: [''],
+    itemTags: [null],
+    itemDelTags: {null:false}
   });
 
 
@@ -47,6 +52,7 @@ export class TodoComponent implements OnInit {
     this.listsClient.get().subscribe(
       result => {
         this.lists = result.lists;
+        console.log(result.lists)
         this.priorityLevels = result.priorityLevels;
         if (this.lists.length) {
           this.selectedList = this.lists[0];
@@ -54,6 +60,16 @@ export class TodoComponent implements OnInit {
       },
       error => console.error(error)
     );
+  }
+
+  removeTag(indexTag): void{
+    //el.selectedItem.colour = "#FFFFFF"
+    console.log(indexTag);
+
+    this.selectedItem.itemTags.splice(indexTag, 1);
+    this.itemDetailsModalRef.hide();
+    this.itemDetailsFormGroup.reset();
+    window.location.reload();
   }
 
   // Lists
@@ -101,7 +117,8 @@ export class TodoComponent implements OnInit {
   showListOptionsModal(template: TemplateRef<any>) {
     this.listOptionsEditor = {
       id: this.selectedList.id,
-      title: this.selectedList.title
+      title: this.selectedList.title,
+      colour: this.selectedList.colour
     };
 
     this.listOptionsModalRef = this.modalService.show(template);
@@ -139,7 +156,7 @@ export class TodoComponent implements OnInit {
   showItemDetailsModal(template: TemplateRef<any>, item: TodoItemDto): void {
     this.selectedItem = item;
     this.itemDetailsFormGroup.patchValue(this.selectedItem);
-
+    
     this.itemDetailsModalRef = this.modalService.show(template);
     this.itemDetailsModalRef.onHidden.subscribe(() => {
         this.stopDeleteCountDown();
@@ -148,6 +165,7 @@ export class TodoComponent implements OnInit {
 
   updateItemDetails(): void {
     const item = new UpdateTodoItemDetailCommand(this.itemDetailsFormGroup.value);
+    console.log(item);
     this.itemsClient.updateItemDetails(this.selectedItem.id, item).subscribe(
       () => {
         if (this.selectedItem.listId !== item.listId) {
@@ -163,8 +181,10 @@ export class TodoComponent implements OnInit {
 
         this.selectedItem.priority = item.priority;
         this.selectedItem.note = item.note;
+        console.log(item.itemDelTags);
         this.itemDetailsModalRef.hide();
         this.itemDetailsFormGroup.reset();
+        //window.location.reload();
       },
       error => console.error(error)
     );

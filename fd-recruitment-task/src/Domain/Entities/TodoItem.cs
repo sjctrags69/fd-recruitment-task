@@ -10,6 +10,8 @@ public class TodoItem : BaseAuditableEntity
 
     public PriorityLevel Priority { get; set; }
 
+    public Colour Colour { get; set; } = Colour.White;
+
     public DateTime? Reminder { get; set; }
 
     private bool _done;
@@ -28,4 +30,5 @@ public class TodoItem : BaseAuditableEntity
     }
 
     public TodoList List { get; set; } = null!;
+    public IList<TodoItemTag> ItemTags { get; private set; } = new List<TodoItemTag>();
 }

@@ -47,9 +47,15 @@
               <input id="{{ 'itemTitle' + i }}" *ngIf="item == selectedItem" type="text"
                 class="form-control item-input-control" [(ngModel)]="item.title" (keyup.enter)="updateItem(item, true)"
                 (blur)="updateItem(item)" autofocus="autofocus" />
-              <div class="todo-item-title" *ngIf="item != selectedItem" [ngClass]="{ 'done-todo': item.done }"
+              <div class="todo-item-title" *ngIf="item != selectedItem" [ngClass]="{ 'done-todo': item.done }" [ngStyle]="{'background-color':item.colour}"
                 (click)="editItem(item, 'itemTitle' + i)" class="form-control item-input-control">
                 <span>{{ item.title }}</span>
+                <div>
+                  Keywords: <span *ngFor="let t of item.itemTags; index as i">
+                    {{t.tag}}&nbsp;
+                  </span>
+                </div>
+              
               </div>
             </div>
             <div class="todo-item-commands">
@@ -126,6 +132,22 @@
       <div class="form-group">
         <label for="note">Note</label>
         <textarea id="note" class="form-control" rows="3" formControlName="note"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="colour">Colour</label>
+        <input type="text" class="form-control" formControlName="colour" />
+      </div>
+      <div class="form-group">
+        <label for="tag">Add Tag</label>
+        <input type="text" class="form-control" formControlName="tag"  />
+      </div>
+      <div class="form-group">
+        <label for="tag">Remove Tag</label>
+        <div *ngFor="let t of selectedItem.itemTags; index as i">
+          
+            <input type="checkbox" name="tags" value="{{t.id}}" formControlName="itemDelTags">{{t.tag}}
+          
+        </div>
       </div>
     </form>
     <div *ngIf="debug">
